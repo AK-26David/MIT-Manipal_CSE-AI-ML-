@@ -1,56 +1,39 @@
 import java.util.Scanner;
-class student
-{
-    int regno;
-    String name;
-    int age;
-    student(String name,int regno,int age)
-    {
-        this.regno=regno;
-        this.name=name;
-        this.age=age;
+class Student {
+    int roll_number;
+    int marks;
+    Student(int roll_number, int marks) {
+        this.roll_number = roll_number;
+        this.marks = marks;
     }
-    void display()
-    {
-        System.out.print("Name of the student:"+name);
-        System.out.print("Registration Number:"+regno);
-        System.out.print("Age:"+age);
+    public int getNumber() {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter roll number of the student:");
+        int roll_number = sc.nextInt();
+        return roll_number;
     }
-}
-class UG extends student
-{
-    int semester;
-    int fees;
-    UG(String name,int regno,int age,int semester,int fees)
-    {
-        super(name,regno,age);
-        this.semester=semester;
-        this.fees=fees;
+    public void putNumber() {
+        System.out.print("Roll number of the student:" + roll_number);
     }
-    void displayUG()
-    {
-        System.out.print("Semester:"+semester);
-        System.out.print("Fees paid by student:"+fees);
+    public int getMarks() {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter marks of the student:");
+        int marks = sc.nextInt();
+        return marks;
+    }          
+    public void putMarks() {
+        System.out.print("Marks of the student:" + marks);
     }
 }
-class main
-{
-    public static void main(String[] args)
-    {
-        Scanner sc=new Scanner(System.in);
-        System.out.print("Enter the name of the student:");
-        String name=sc.nextLine();
-        System.out.print("Enter the registration number of the student:");
-        int regno=sc.nextInt();
-        System.out.print("Enter the age of the student:");
-        int age=sc.nextInt();
-        System.out.print("Enter the semester of the student:");
-        int semester=sc.nextInt();
-        System.out.print("Enter the fees paid by the student:");
-        int fees=sc.nextInt();
-        UG ugstudents=new UG(name,regno,age,semester,fees);
-        ugstudents.display();
-        ugstudents.displayUG();
-        sc.close();
+interface Sports {
+    void putGrade(String grade);
+}
+class Result extends Student implements Sports {
+    Result(int roll_number, int marks) {
+        super(roll_number, marks);
+    }
+
+    public void putGrade(String grade) {
+        System.out.print("The grade obtained by the student is:" + grade);
     }
 }
