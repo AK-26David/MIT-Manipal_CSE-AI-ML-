@@ -1,12 +1,14 @@
 # Basics of SQL
 
-### 1) Creating a table - 
+#### 1) Creating a table
+```sql
 create table employees(
     name			varchar(40),
     dob				date,
     compensation	number(12, 2),
     productivity    number(3, 1)
 );
+```
 
 
 #### 2) Adding, modifying, and dropping columns
