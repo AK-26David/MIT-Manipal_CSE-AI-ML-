@@ -18,10 +18,10 @@ Graph data structures are data structures that consist of a collection of nodes 
 
 Sample code of BFS - <br>
 
-from collections import deque
-def bfs(graph, start, search_value):
-    visited = set()
-    queue = deque([start])
+from collections import deque<br>
+def bfs(graph, start, search_value):<br>
+    visited = set()<br>
+    queue = deque([start])<br>
 
     while queue:
         vertex = queue.popleft()
@@ -44,10 +44,10 @@ graph = {
     'F': ['C', 'E']
 }
 
-start = "F"
-search_value = "B"
-res = bfs(graph, start, search_value)
-print(f"element {search_value} : {res}")
+start = "F"<br>
+search_value = "B"<br>
+res = bfs(graph, start, search_value)<br>
+print(f"element {search_value} : {res}")<br>
 
 
-# output : element B : True
+output : element B : True
