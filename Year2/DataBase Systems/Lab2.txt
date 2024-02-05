@@ -30,5 +30,14 @@ select * from employee;
 
 University DataBase---
 
+insert all the values from the university DataBase and small Relations
 
-
+select name,dept_name from student;
+select * from instructor where dept_name='Comp_Sci';
+select title,credits from course where credits=3;
+select course_id, title from course natural join takes where id=12345;
+select * from instructor where salary between 40000 and 90000;
+select id,name from instructor where id not in(select distinct id from teaches);
+select name, title, year from Student natural join Course natural join Section where room_number = 303;
+select name from instructor where dept_name like '%ch%';
+select name, length(name) from student;
