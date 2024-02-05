@@ -1,0 +1,28 @@
+CREATE TABLE employee (
+    empno NUMBER(4) PRIMARY KEY,
+    name VARCHAR(30) NOT NULL,
+    gender CHAR(1) NOT NULL CHECK (gender IN ('M', 'F')),
+    salary NUMBER(7) NOT NULL,
+    address VARCHAR(70) NOT NULL,
+    dno NUMBER(4)
+);
+
+create table department(deptno number(6) primary key, deptname varchar(10) unique, location varchar(10));
+
+alter table employee add constraint FK_DNo foreign key(dno) references department(deptno);
+
+insert into department values(1,'CSE','AB5');
+insert into department values(2,'ECE','AB4');
+insert into department values(3,'ICT','AB3');
+insert into department values(4,'MIE','AB2');
+insert into department values(5,'EEE','AB1');
+
+select * from department;
+
+
+insert into Employee values (1,'taksh','M',69000,'Manipal',1);
+insert into Employee values (2,'sara','F',42000,'Manipal',3);
+insert into Employee values (3,'jay','M',30000,'Manipal',2);
+
+select * from employee;
+
