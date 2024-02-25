@@ -7,14 +7,11 @@ int adjacencyMatrix[MAX_CITIES][MAX_CITIES];
 // Function to calculate the total distance of a given path
 int calculateTotalDistance(int path[], int numCities) {
     int totalDistance = 0;
-    
     for (int i = 0; i < numCities - 1; i++) {
         totalDistance += adjacencyMatrix[path[i]][path[i + 1]];
     }
-    
     // Add the distance from the last city back to the starting city
     totalDistance += adjacencyMatrix[path[numCities - 1]][path[0]];
-    
     return totalDistance;
 }
 
@@ -24,13 +21,11 @@ void swap(int* a, int* b) {
     *a = *b;
     *b = temp;
 }
-
 // Function to generate all permutations of a given array
 void generatePermutations(int path[], int start, int numCities, int* minDistance, int* optimalPath) {
     if (start == numCities - 1) {
         // Calculate the total distance for the current permutation
-        int currentDistance = calculateTotalDistance(path, numCities);
-        
+        int currentDistance = calculateTotalDistance(path, numCities);       
         // Update the minimum distance and optimal path if needed
         if (currentDistance < *minDistance) {
             *minDistance = currentDistance;

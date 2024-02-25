@@ -65,7 +65,7 @@ int isBipartiteBFS(int graph[MAX_VERTICES][MAX_VERTICES], int vertices, int star
     }
 
     return 1;
-}
+}  
 
 int main() {
     int vertices, edges;
