@@ -1,53 +1,53 @@
 import heapq
 
-def input_weighted_graph():
-    graph = {}
+def reconstruct_path(start, goal, prev):
+    path = [goal]
+    current = goal
+    while current != start:
+        current = prev[current]
+        path.append(current)
+    path.reverse()
+    return path
 
-    vertices = int(input("Enter the number of vertices: "))
+def ucs(G, start, goal):
+    frontier = [(0, start)]  # Priority queue with (cost, node) tuples
+    prev = {start: None}
+    cost_so_far = {start: 0}
 
-    for vertex in range(1, vertices + 1):
-        neighbors = {}
-        num_neighbors = int(input(f"Enter the number of neighbors for vertex {vertex}: "))
-        
-        for _ in range(num_neighbors):
-            neighbor, cost = map(int, input(f"Enter neighbor and cost for vertex {vertex} (space-separated): ").split())
-            neighbors[neighbor] = cost
-        
-        graph[vertex] = neighbors
+    while frontier:
+        current_cost, current = heapq.heappop(frontier)
 
-    return graph
+        if current == goal:
+            break
 
-def uniform_cost_search(graph, start, goal):
-    heap = [(0, start, [])]
-    visited = set()
+        for next_node, weight in G[current]:
+            new_cost = cost_so_far[current] + weight
 
-    while heap:
-        (cost, current, path) = heapq.heappop(heap)
+            if next_node not in prev or new_cost < cost_so_far[next_node]:
+                cost_so_far[next_node] = new_cost
+                heapq.heappush(frontier, (new_cost, next_node))
+                prev[next_node] = current
 
-        if current not in visited:
-            visited.add(current)
-            path = path + [current]
+    return reconstruct_path(start, goal, prev)
 
-            if current == goal:
-                return path, cost
+# Taking user input for the graph
+G = {}
+num_edges = int(input("Enter the number of edges: "))
+for _ in range(num_edges):
+    edge_info = input("Enter edge (node1 node2 weight): ").split()
+    node1, node2, weight = map(int, edge_info)
 
-            for neighbor, neighbor_cost in graph[current].items():
-                heapq.heappush(heap, (cost + neighbor_cost, neighbor, path))
+    if node1 not in G:
+        G[node1] = []
+    if node2 not in G:
+        G[node2] = []
 
-    return None
+    G[node1].append((node2, weight))
+    G[node2].append((node1, weight))
 
-if __name__ == "__main__":
-    input_graph_data = input_weighted_graph()
+start_node = int(input("Enter the start node: "))
+goal_node = int(input("Enter the goal node: "))
 
-    start_vertex = int(input("Enter the start vertex: "))
-    goal_vertex = int(input("Enter the goal vertex: "))
-
-    result = uniform_cost_search(input_graph_data, start_vertex, goal_vertex)
-
-    if result:
-        path, cost = result
-        print(f"\nUniform Cost Search Path from {start_vertex} to {goal_vertex}:")
-        print(" -> ".join(map(str, path)))
-        print(f"Total Cost: {cost}")
-    else:
-        print(f"\nNo path found from {start_vertex} to {goal_vertex}.")
+# Call the UCS function and print the result
+result_path = ucs(G, start_node, goal_node)
+print("UCS Path:", result_path)
