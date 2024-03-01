@@ -1,43 +1,32 @@
-def input_graph():
-    graph = {}
+def bfs(G, start):
+    frontier = [start]
+    reached = {start}
 
-    vertices = int(input("Enter the number of vertices: "))
+    while frontier:
+        current = frontier.pop(0)
+        print(f"Visiting {current}")
+        for neighbor, edge_w in G[current]:
+            if neighbor not in reached:
+                frontier.append(neighbor)
+                reached.add(neighbor)
 
-    for vertex in range(1, vertices + 1):
-        neighbors = list(map(int, input(f"Enter neighbors for vertex {vertex} (space-separated): ").split()))
-        graph[vertex] = neighbors
+# Taking user input for the graph
+G = {}
+num_edges = int(input("Enter the number of edges: "))
+for _ in range(num_edges):
+    edge_info = input("Enter edge (node1 node2 weight): ").split()
+    node1, node2, weight = map(int, edge_info)
+    
+    if node1 not in G:
+        G[node1] = []
+    if node2 not in G:
+        G[node2] = []
+    
+    G[node1].append((node2, weight))
+    G[node2].append((node1, weight))
 
-    return graph
+start_node = int(input("Enter the start node: "))
 
-def breadth_first_search(graph, start, goal):
-    queue = [(start, [start])]
-    visited = set()
-
-    while queue:
-        current, path = queue.pop(0)
-
-        if current not in visited:
-            visited.add(current)
-
-            if current == goal:
-                return path
-
-            for neighbor in graph[current]:
-                if neighbor not in visited:
-                    queue.append((neighbor, path + [neighbor]))
-
-    return None
-
-if __name__ == "__main__":
-    input_graph_data = input_graph()
-
-    start_vertex = int(input("Enter the start vertex: "))
-    goal_vertex = int(input("Enter the goal vertex: "))
-
-    result_path = breadth_first_search(input_graph_data, start_vertex, goal_vertex)
-
-    if result_path:
-        print(f"\nBreadth-First Search Path from {start_vertex} to {goal_vertex}:")
-        print(" -> ".join(map(str, result_path)))
-    else:
-        print(f"\nNo path found from {start_vertex} to {goal_vertex}.")
+# Call the BFS function and print the visiting order
+print("BFS Visiting Order:")
+bfs(G, start_node)
