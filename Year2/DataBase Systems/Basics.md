@@ -1,6 +1,6 @@
 # Basics of SQL
 
-#### 1) Creating a table -
+#### 1) Creating a table-
 ```sql
 create table employees(
     name			varchar(40),
