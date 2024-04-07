@@ -1,125 +1,98 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_VERTICES 100
+// Create a struct for a node
+struct node {
+  int vertex;
+  struct node* next;
+};
 
-int visited[MAX_VERTICES];
-int color[MAX_VERTICES];
+// Create a struct for a graph
+struct Graph {
+  int numVertices;
+  int* visited;
 
-typedef struct
-{
-    int vertices[MAX_VERTICES];
-    int front, rear;
-} Queue;
+  // We need int** to store a two dimensional array.
+  // Similarly, we need struct node** to store an array of Linked lists
+  struct node** adjLists;
+};
 
-void initializeQueue(Queue *q)
-{
-    q->front = -1;
-    q->rear = -1;
+// Create a node
+struct node* createNode(int v) {
+  struct node* newNode = (struct node*) malloc(sizeof(struct node));
+  newNode->vertex = v;
+  newNode->next = NULL;
+  return newNode;
 }
 
-int isEmpty(Queue *q)
-{
-    return q->front == -1;
+// Create a graph
+struct Graph* createGraph(int numVertices) {
+  struct Graph* graph = (struct Graph*) malloc(sizeof(struct Graph));
+  graph->numVertices = numVertices;
+  graph->visited = (int*) malloc(numVertices * sizeof(int));
+  graph->adjLists = (struct node**) malloc(numVertices * sizeof(struct node*));
+
+  int i;
+  for (i = 0; i < numVertices; i++) {
+    graph->adjLists[i] = NULL;
+    graph->visited[i] = 0;
+  }
+
+  return graph;
 }
 
-void enqueue(Queue *q, int vertex)
-{
-    if (isEmpty(q))
-    {
-        q->front = 0;
-    }
-    q->rear++;
-    q->vertices[q->rear] = vertex;
+// Add an edge to the graph
+void addEdge(struct Graph* graph, int src, int dest) {
+  struct node* newNode = createNode(dest);
+  newNode->next = graph->adjLists[src];
+  graph->adjLists[src] = newNode;
+
+  newNode = createNode(src);
+  newNode->next = graph->adjLists[dest];
+  graph->adjLists[dest] = newNode;
 }
 
-int dequeue(Queue *q)
-{
-    int vertex = q->vertices[q->front];
-    if (q->front == q->rear)
-    {
-        q->front = -1;
-        q->rear = -1;
+// Perform DFS traversal on the graph
+void DFS(struct Graph* graph, int vertex) {
+  struct node* adjList = graph->adjLists[vertex];
+  struct node* temp = adjList;
+
+  graph->visited[vertex] = 1;
+  printf("Visited %d \n", vertex);
+
+  while (temp != NULL) {
+    int connectedVertex = temp->vertex;
+
+    if (graph->visited[connectedVertex] == 0) {
+      DFS(graph, connectedVertex);
     }
-    else
-    {
-        q->front++;
-    }
-    return vertex;
+    temp = temp->next;
+  }
 }
 
-int isBipartiteDFS(int graph[MAX_VERTICES][MAX_VERTICES], int vertices, int currentVertex, int c)
-{
-    visited[currentVertex] = 1;
-    color[currentVertex] = c;
+// Take user input and perform DFS traversal
+int main() {
+  int numVertices, numEdges, i, start, end;
 
-    for (int i = 0; i < vertices; i++)
-    {
-        if (graph[currentVertex][i] == 1)
-        {
-            if (!visited[i])
-            {
-                if (!isBipartiteDFS(graph, vertices, i, 1 - c))
-                {
-                    return 0;
-                }
-            }
-            else if (color[i] == color[currentVertex])
-            {
-                return 0;
-            }
-        }
-    }
-    return 1;
-}
+  printf("Enter the number of vertices: ");
+  scanf("%d", &numVertices);
 
-int isBipartite(int graph[MAX_VERTICES][MAX_VERTICES], int vertices)
-{
-    for (int i = 0; i < vertices; i++)
-    {
-        visited[i] = 0;
-        color[i] = -1;
-    }
+  printf("Enter the number of edges: ");
+  scanf("%d", &numEdges);
 
-    for (int i = 0; i < vertices; i++)
-    {
-        if (!visited[i])
-        {
-            if (!isBipartiteDFS(graph, vertices, i, 0))
-            {
-                return 0;
-            }
-        }
-    }
-    return 1;
-}
+  struct Graph* graph = createGraph(numVertices);
 
-int main()
-{
-    int vertices, edges;
+  printf("Enter the edges (start end): ");
+  for (i = 0; i < numEdges; i++) {
+    scanf("%d %d", &start, &end);
+    addEdge(graph, start, end);
+  }
 
-    printf("Enter the number of vertices and edges: ");
-    scanf("%d %d", &vertices, &edges);
+  printf("Enter the starting vertex for DFS traversal: ");
+  scanf("%d", &start);
 
-    int graph[MAX_VERTICES][MAX_VERTICES] = {0};
+  printf("DFS Traversal Order: ");
+  DFS(graph, start);
 
-    printf("Enter the edges (vertex1 vertex2):\n");
-    for (int i = 0; i < edges; i++)
-    {
-        int vertex1, vertex2;
-        scanf("%d %d", &vertex1, &vertex2);
-        graph[vertex1][vertex2] = 1;
-        graph[vertex2][vertex1] = 1;
-    }
-
-    if (isBipartite(graph, vertices))
-    {
-        printf("The graph is bipartite.\n");
-    }
-    else
-    {
-        printf("The graph is not bipartite.\n");
-    }
-
-    return 0;
+  return 0;
 }

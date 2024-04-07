@@ -1,93 +1,161 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_VERTICES 100
+// Create a struct for a node
+struct node {
+  int vertex;
+  struct node* next;
+};
 
-int color[MAX_VERTICES];
+// Create a struct for a graph
+struct Graph {
+  int numVertices;
+  int* visited;
+  struct node** adjLists;
+};
 
-typedef struct {
-    int vertices[MAX_VERTICES];
-    int front, rear;
-} Queue;
-
-void initializeQueue(Queue *q) {
-    q->front = -1;
-    q->rear = -1;
+// Create a node
+struct node* createNode(int v) {
+  struct node* newNode = (struct node*)malloc(sizeof(struct node));
+  newNode->vertex = v;
+  newNode->next = NULL;
+  return newNode;
 }
 
-int isEmpty(Queue *q) {
-    return q->front == -1;
+// Create a graph
+struct Graph* createGraph(int numVertices) {
+  struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
+  graph->numVertices = numVertices;
+  graph->visited = (int*)malloc(numVertices * sizeof(int));
+  graph->adjLists = (struct node**)malloc(numVertices * sizeof(struct node*));
+
+  for (int i = 0; i < numVertices; i++) {
+    graph->adjLists[i] = NULL;
+    graph->visited[i] = 0;
+  }
+
+  return graph;
 }
 
-void enqueue(Queue *q, int vertex) {
-    if (isEmpty(q)) {
-        q->front = 0;
-    }
-    q->rear++;
-    q->vertices[q->rear] = vertex;
+// Add an edge to the graph
+void addEdge(struct Graph* graph, int src, int dest) {
+  struct node* newNode = createNode(dest);
+  newNode->next = graph->adjLists[src];
+  graph->adjLists[src] = newNode;
+
+  newNode = createNode(src);
+  newNode->next = graph->adjLists[dest];
+  graph->adjLists[dest] = newNode;
 }
 
-int dequeue(Queue *q) {
-    int vertex = q->vertices[q->front];
-    if (q->front == q->rear) {
-        q->front = -1;
-        q->rear = -1;
-    } else {
-        q->front++;
-    }
-    return vertex;
+// Implement a queue using an array
+struct Queue {
+  int front, rear, size;
+  unsigned capacity;
+  int* array;
+};
+
+struct Queue* createQueue(unsigned capacity) {
+  struct Queue* queue = (struct Queue*)malloc(sizeof(struct Queue));
+  queue->capacity = capacity;
+  queue->front = queue->size = 0;
+  queue->rear = capacity - 1;
+  queue->array = (int*)malloc(queue->capacity * sizeof(int));
+  return queue;
 }
 
-int isBipartiteBFS(int graph[MAX_VERTICES][MAX_VERTICES], int vertices, int startVertex) {
-    Queue q;
-    initializeQueue(&q);
+int isFull(struct Queue* queue) {
+  return (queue->size == queue->capacity);
+}
 
-    for (int i = 0; i < vertices; i++) {
-        color[i] = -1;
+int isEmpty(struct Queue* queue) {
+  return (queue->size == 0);
+}
+
+void enqueue(struct Queue* queue, int item) {
+  if (isFull(queue))
+    return;
+  queue->rear = (queue->rear + 1) % queue->capacity;
+  queue->array[queue->rear] = item;
+  queue->size += 1;
+}
+
+int dequeue(struct Queue* queue) {
+  if (isEmpty(queue))
+    return -1;
+  int item = queue->array[queue->front];
+  queue->front = (queue->front + 1) % queue->capacity;
+  queue->size -= 1;
+  return item;
+}
+
+// Perform BFS traversal on the graph using a queue
+void BFS(struct Graph* graph, int startVertex) {
+  // Create a queue for BFS
+  struct Queue* queue = createQueue(graph->numVertices);
+
+  // Enqueue the starting vertex and mark it as visited
+  enqueue(queue, startVertex);
+  graph->visited[startVertex] = 1;
+
+  while (!isEmpty(queue)) {
+    int currentVertex = dequeue(queue);
+    printf("Visited %d \n", currentVertex);
+
+    struct node* adjList = graph->adjLists[currentVertex];
+    struct node* temp = adjList;
+
+    while (temp != NULL) {
+      int connectedVertex = temp->vertex;
+      if (graph->visited[connectedVertex] == 0) {
+        enqueue(queue, connectedVertex);
+        graph->visited[connectedVertex] = 1;
+      }
+      temp = temp->next;
     }
+  }
 
-    color[startVertex] = 0;
-    enqueue(&q, startVertex);
+  // Free the memory used by the queue
+  free(queue->array);
+  free(queue);
+}
 
-    while (!isEmpty(&q)) {
-        int currentVertex = dequeue(&q);
-
-        for (int i = 0; i < vertices; i++) {
-            if (graph[currentVertex][i] == 1) {
-                if (color[i] == -1) {
-                    color[i] = 1 - color[currentVertex];
-                    enqueue(&q, i);
-                } else if (color[i] == color[currentVertex]) {
-                    return 0;
-                }
-            }
-        }
-    }
-
-    return 1;
-}  
-
+// Take user input and perform BFS traversal
 int main() {
-    int vertices, edges;
+  int numVertices, numEdges, i, start, end;
 
-    printf("Enter the number of vertices and edges: ");
-    scanf("%d %d", &vertices, &edges);
+  printf("Enter the number of vertices: ");
+  scanf("%d", &numVertices);
 
-    int graph[MAX_VERTICES][MAX_VERTICES] = {0};
+  printf("Enter the number of edges: ");
+  scanf("%d", &numEdges);
 
-    printf("Enter the edges (vertex1 vertex2):\n");
-    for (int i = 0; i < edges; i++) {
-        int vertex1, vertex2;
-        scanf("%d %d", &vertex1, &vertex2);
-        graph[vertex1][vertex2] = 1;
-        graph[vertex2][vertex1] = 1;
+  struct Graph* graph = createGraph(numVertices);
+
+  printf("Enter the edges (start end): ");
+  for (i = 0; i < numEdges; i++) {
+    scanf("%d %d", &start, &end);
+    addEdge(graph, start, end);
+  }
+
+  printf("Enter the starting vertex for BFS traversal: ");
+  scanf("%d", &start);
+
+  printf("BFS Traversal Order: ");
+  BFS(graph, start);
+
+  // Free the memory used by the graph
+  for (i = 0; i < graph->numVertices; i++) {
+    struct node* temp = graph->adjLists[i];
+    while (temp != NULL) {
+      struct node* prev = temp;
+      temp = temp->next;
+      free(prev);
     }
+  }
+  free(graph->adjLists);
+  free(graph->visited);
+  free(graph);
 
-    if (isBipartiteBFS(graph, vertices, 0)) {
-        printf("The graph is bipartite.\n");
-    } else {
-        printf("The graph is not bipartite.\n");
-    }
-
-    return 0;
+  return 0;
 }
