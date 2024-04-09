@@ -1,0 +1,11 @@
+1.) DECLARE
+    r_no student.id%type;
+    cgpa student.gpa%type;
+    BEGIN
+    r_no:='&rno';
+    select gpa into cgpa from student where r_no=rno;
+    dbms_output_put_line('GPA'||cgpa);
+    end;
+    /
+
+2.)  

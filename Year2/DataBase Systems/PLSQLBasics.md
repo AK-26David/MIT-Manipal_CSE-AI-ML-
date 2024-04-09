@@ -49,7 +49,7 @@
     f:=70/30;
     dbms_output.put_line('Value of F is'||f);
     END;
-    /
+    /                           
 
     Nested Declare - 
 
@@ -67,7 +67,7 @@
     c_id customers.id%type:=1;
     c_name customers.name%type;
     c_add customers.address%type;
-    c_sal customers.salary%type;\
+    c_sal customers.salary%type;
     BEGIN
     SELECT name,address,salary into c_name,c_add,c_sal
     FROM Customers
@@ -124,7 +124,7 @@
        BEGIN
        LOOP
        DBMS_OUTPUT.PUT_LINE ('Inside loop: x = ' ||
-       TO_CHAR(x));
+       TO_CHAR(x));             
        x := x + 1;
        IF x > 3 THEN EXIT;
        END IF;
@@ -204,7 +204,7 @@
        update account set balance = Temp where account_number =
        ANumber;
        ELSE
-       RAISE Insufficient_Balanae;
+       RAISE Insufficient_Balance;
        EXCEPTION
        WHEN Insufficient_Balance THEN
        dbms_output.put_line(“Insufficient Balance”);
