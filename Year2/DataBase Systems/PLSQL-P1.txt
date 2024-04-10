@@ -3,7 +3,7 @@ insert into StudentTable values(1,5.5);
 
 
 1.) DECLARE
-    Rno student.id%type;
+    Rno student.rno%type;
     cgpa student.gpa%type;
     BEGIN
     Rno:='&rno';
@@ -11,6 +11,7 @@ insert into StudentTable values(1,5.5);
     dbms_output_put_line('GPA'||cgpa);
     end;
     /
+
 
 
 2.) set serveroutput on
@@ -57,7 +58,7 @@ end;
     update StudentTable set LetterGrade='F' where Rno=i;
     elsif g > 4 and g <= 5 then
             update StudentTable set LetterGrade = 'E' where RollNo = i;
-       elsif g > 5 and g <= 6 then
+    elsif g > 5 and g <= 6 then
             update StudentTable set LetterGrade = 'D' where RollNo = i;
         elsif g > 6 and g <= 7 then
             update StudentTable set LetterGrade = 'C' where RollNo = i;
@@ -94,3 +95,15 @@ begin
 end;
 /
 
+7.) set serveroutput on
+    DECLARE
+    name instructor.name%type;
+    BEGIN
+    select name into name from instructor where name='&name';
+    dbms_output_put_line(name||'Found');
+    EXCEPTION
+    when no_data_found then dbms_output.put_line('Multiple Rows Found');
+    end;
+    /
+
+    end
